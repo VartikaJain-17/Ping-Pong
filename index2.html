@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mario Game</title>
+    <style>
+        #gameCanvas {
+            border: 1px solid black;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <script>
+        // Get canvas element and its context
+        var canvas = document.getElementById("gameCanvas");
+        var ctx = canvas.getContext("2d");
+
+        // Mario properties
+        var mario = {
+            x: 50,
+            y: canvas.height - 50,
+            width: 50,
+            height: 50,
+            speed: 5,
+            jumping: false,
+            jumpHeight: 100,
+            jumpSpeed: 5,
+            gravity: 0.2
+        };
+
+        // Background properties
+        var bg = {
+            x: 0,
+            y: 0,
+            width: 800,
+            height: 400,
+            speed: 2
+        };
+
+        // Control variables
+        var rightPressed = false;
+        var leftPressed = false;
+        var spacePressed = false;
+
+        // Event listeners for player movement
+        document.addEventListener("keydown", keyDownHandler, false);
+        document.addEventListener("keyup", keyUpHandler, false);
+
+        function keyDownHandler(e) {
+            if (e.key == "Right" || e.key == "ArrowRight") {
+                rightPressed = true;
+            } else if (e.key == "Left" || e.key == "ArrowLeft") {
+                leftPressed = true;
+            } else if (e.key == " ") {
+                spacePressed = true;
+            }
+        }
+
+        function keyUpHandler(e) {
+            if (e.key == "Right" || e.key == "ArrowRight") {
+                rightPressed = false;
+            } else if (e.key == "Left" || e.key == "ArrowLeft") {
+                leftPressed = false;
+            } else if (e.key == " ") {
+                spacePressed = false;
+            }
+        }
+
+        // Main game loop
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw background
+            ctx.fillStyle = "#4CAF50";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw Mario
+            ctx.fillStyle = "#FF0000";
+            ctx.fillRect(mario.x, mario.y, mario.width, mario.height);
+            
+            // Move Mario
+            if (rightPressed && mario.x < canvas.width - mario.width) {
+                mario.x += mario.speed;
+            } else if (leftPressed && mario.x > 0) {
+                mario.x -= mario.speed;
+            }
+            
+            // Jump mechanic
+            if (spacePressed && !mario.jumping) {
+                mario.jumping = true;
+            }
+            
+            if (mario.jumping) {
+                if (mario.jumpHeight > 0) {
+                    mario.y -= mario.jumpSpeed;
+                    mario.jumpHeight -= mario.jumpSpeed;
+                } else {
+                    mario.jumping = false;
+                }
+            } else {
+                if (mario.y < canvas.height - mario.height) {
+                    mario.y += mario.gravity+1;
+                }
+                if (mario.y > canvas.height - mario.height) {
+                    mario.y = canvas.height - mario.height;
+                    mario.jumpHeight = 100;
+                }
+            }
+            
+            // Move background
+            bg.x -= bg.speed;
+            if (bg.x <= -bg.width) {
+                bg.x = 0;
+            }
+            
+            requestAnimationFrame(draw);
+        }
+
+        // Start the game loop
+        draw();
+    </script>
+</body>
+</html>
